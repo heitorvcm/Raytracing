@@ -17,7 +17,7 @@ O motor de renderização suporta as seguintes capacidades de renderização fot
 ### Recursos de Ray Tracing Distribuído (DRT)
 
 1.  **Sombras Suaves (Soft Shadows):** O programa utiliza amostragem de Monte Carlo sobre a área física da fonte de luz para gerar penumbra realista. A suavidade é controlada pelo parâmetro **Raio (R)** da luz.
-2.  **Profundidade de Campo (Depth of Field - DoF):** É implementada a simulação de lentes com abertura ($\text{aperture}$) e distância focal ($\text{focal\_dist}$) variáveis, feita através de multisampling para obter foco seletivo.
+2.  **Profundidade de Campo (Depth of Field - DoF):** É implementada a simulação de lentes com abertura ($\text{aperture}$) e distância focal (`focal_dist`) variáveis, feita através de multisampling para obter foco seletivo.
 
 ---
 
@@ -25,7 +25,7 @@ O motor de renderização suporta as seguintes capacidades de renderização fot
 
 O arquivo de entrada é um texto simples que define a cena em blocos sequenciais obrigatórios.
 
-1.  **Câmera:** Definida por Posição, Ponto de Visão, Vetor 'Up' e FOV. Os parâmetros de **Abertura ($\text{aperture}$)** e **Distância Focal ($\text{focal\_dist}$)** são definidos na mesma linha do FOV.
+1.  **Câmera:** Definida por Posição, Ponto de Visão, Vetor 'Up' e FOV. Os parâmetros de **Abertura ($\text{aperture}$)** e **Distância Focal `focal_dist`** são definidos na mesma linha do FOV.
 
 2.  **Luzes:** Cada luz é definida por Posição, Cor, Atenuação ($K_c, K_l, K_q$) e o **Raio (R)**. Se $R>0$, ativa a sombra suave.
 
