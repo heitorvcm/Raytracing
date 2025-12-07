@@ -1,97 +1,56 @@
-# Ray Tracer Distribuído (V1.0)
+## 📝 ARQUIVO: `README.md`
 
-Este projeto é um traçador de raios (Ray Tracer) em C que implementa técnicas avançadas de renderização, como Ray Tracing Distribuído, para gerar imagens fotorrealistas.
+### Ray Tracer Distribuído (V1.0)
 
----
-
-## 1. Estrutura do Arquivo de Entrada (Cena)
-
-O programa lê a configuração da cena a partir de um arquivo de texto, onde os parâmetros devem ser fornecidos em uma ordem específica.
-
-### 1.1. Ordem dos Blocos
-
-1. **Câmera** (4 linhas de parâmetros)
-2. **Luzes** (3 parâmetros por luz)
-3. **Pigmentos** (Definições de cor/textura)
-4. **Acabamentos (Finish)** (Definições de material)
-5. **Objetos** (Lista de formas)
+Este projeto implementa um Ray Tracer em C, utilizando técnicas de **Ray Tracing Distribuído** para gerar imagens 3D fotorrealistas a partir de um arquivo de configuração de cena.
 
 ---
 
-### 1.2. Bloco 1: Câmera (5 Parâmetros)
+### 1. Funcionalidades Implementadas (Features)
 
-| Parâmetro | Linha | Campos (X, Y, Z) | Descrição |
-| :--- | :--- | :--- | :--- |
-| **Eye** | 1 | X Y Z | Posição do observador no espaço. |
-| **Center** | 2 | X Y Z | Ponto para onde a câmera está apontada. |
-| **Up** | 3 | X Y Z | Vetor que define o "topo" da imagem. |
-| **FOV, Aperture, Focal Dist** | 4 | FOV Aperture Focal\_Dist | **FOV:** Ângulo de visão (vertical). **Aperture:** Diâmetro da abertura da lente (para DoF). **Focal\_Dist:** Distância de foco (para DoF). |
+O motor de renderização suporta as seguintes capacidades, baseadas em Ray Tracing Distribuído:
 
-| Parâmetro | Linha | Campos | Descrição |
-| :--- | :--- | :--- | :--- |
-| **Amostras** | 5 | N\_SAMPLES | Número de raios disparados por pixel (para AA, DoF e Soft Shadows). |
+* **Geometria:** Suporte nativo para **Esferas**, **Poliedros Convexos**, **Cilindros** e **Cones**.
+* **Iluminação (Phong):** Implementação do Modelo de Reflexão de **Phong** (Ambiente, Difusa, Especular) para iluminação local.
+* **Ray Tracing Recursivo:** Simulação de superfícies transparentes ($\text{K}_t$) e reflexivas ($\text{K}_r$).
+* **Texturização:** Suporte a cores sólidas, padrões procedurais (`checker`) e mapeamento de texturas planas (`texmap`).
+* **Anti-aliasing:** Amostragem por pixel (`multisampling`) para suavizar bordas.
 
----
+#### Recursos de Ray Tracing Distribuído (DRT)
 
-### 1.3. Bloco 2: Luzes
-
-A primeira linha define o número de luzes (`N_LIGHTS`). Cada luz subsequente é definida por 7 parâmetros:
-
-| Posição (X Y Z) | Cor (R G B) | Intensidade (1.0) | Raio (R) |
-| :--- | :--- | :--- | :--- |
-| X Y Z | R G B | K\_CONST K\_LIN K\_QUAD | R |
-
-* **Raio (R):** Define o tamanho físico da luz. `R > 0` ativa **Sombras Suaves (Soft Shadows)**.
+1.  **Sombras Suaves (Soft Shadows):** O programa utiliza amostragem de Monte Carlo sobre a área física da fonte de luz para gerar penumbra realista. A suavidade é controlada pelo parâmetro **Raio (R)** da luz.
+2.  **Profundidade de Campo (Depth of Field - DoF):** É implementada a simulação de lentes com abertura ($\text{aperture}$) e distância focal ($\text{focal\_dist}$) variáveis. Isso é feito através de multisampling para obter foco seletivo.
 
 ---
 
-### 1.4. Bloco 3: Pigmentos (Texturas)
+### 2. Especificação do Arquivo de Entrada (Estrutura Normal)
 
-A primeira linha define o número de pigmentos (`N_PIGMENTS`).
+O arquivo de entrada é um texto simples que define a cena em blocos sequenciais.
 
-| Tipo | Cor/Textura | Parâmetros |
-| :--- | :--- | :--- |
-| `solid` | R G B | Cor sólida. |
-| `checker` | R1 G1 B1, R2 G2 B2, Size | Padrão xadrez com duas cores e tamanho. |
-| `texmap` | `nome_arq.ppm` | Mapeamento de textura de imagem. |
-| **(Texmap Extra)** | Linha 1 | P1\_X P1\_Y P1\_Z P1\_W | Coordenadas de mapeamento (ajuste de escala/orientação). |
-| **(Texmap Extra)** | Linha 2 | P2\_X P2\_Y P2\_Z P2\_W | Coordenadas de mapeamento. |
+1. **Câmera:** Definida por Posição, Ponto de Visão, Vetor 'Up' e **FOV** (Field of View). Os parâmetros de **Abertura (Aperture)** e **Distância Focal (Focal\_Dist)** são definidos na mesma linha do FOV.
 
----
+2. **Luzes:** Cada luz é definida por Posição, Cor, Atenuação ($\text{K}_c, \text{K}_l, \text{K}_q$) e o **Raio ($\text{R}$)**. Se $\text{R}>0$, ativa a sombra suave.
 
-### 1.5. Bloco 4: Acabamentos (Finish)
+3. **Pigmentos:** Define cores sólidas, padrões `checker` ou `texmap` (mapeamento de textura).
 
-A primeira linha define o número de acabamentos (`N_FINISHES`). Cada acabamento usa o modelo de Phong expandido:
+4. **Acabamentos (Finish):** Define propriedades de material (Phong) e de reflexão/refração ($\text{K}_r, \text{K}_t, \text{IOR}$).
 
-| Ka | Kd | Ks | Alpha | Kr | Kt | IOR |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Reflexão Ambiente | Reflexão Difusa | Reflexão Especular | Brilho (Exponencial) | Coef. de Reflexão | Coef. de Transmissão | Índice de Refração |
-
-* **Transparência:** Para um objeto transparente (vidro), use **`Kt`** alto (ex: `0.95`) e **`IOR`** (ex: `1.5`).
-* **Reflexão:** Para um objeto espelhado, use **`Kr`** alto (ex: `0.95`).
+5. **Objetos:** Define o índice do Pigmento, o índice do Acabamento e o tipo (**`sphere`**, **`cylinder`**, **`cone`**, **`polyhedron`**), seguido dos parâmetros de geometria (centro, raio, altura, ou planos).
 
 ---
 
-### 1.6. Bloco 5: Objetos
+### 3. Instruções de Compilação e Execução
 
-A primeira linha define o número de objetos (`N_OBJECTS`).
+#### 3.1. Compilação
+O projeto é compilado via `Makefile` e requer a biblioteca matemática (`-lm`).
+```bash make
 
-| Pigment Index | Finish Index | Tipo | Geometria (Parâmetros) |
-| :--- | :--- | :--- | :--- |
-| P\_IDX | F\_IDX | `sphere` | Center\_X Y Z Radius |
-| P\_IDX | F\_IDX | `polyhedron` | N\_PLANES |
-| | | | Plano 1: A B C D |
-| | | | ... N Planos |
-| P\_IDX | F\_IDX | `cylinder` | Base\_X Y Z Radius Height |
-| P\_IDX | F\_IDX | `cone` | Base\_X Y Z Radius Height |
+#### 3.2. Execução
 
----
+O programa exige o arquivo de entrada e o nome do arquivo de saída (PPM). A resolução é opcional.
 
-## 2. Instruções de Compilação e Execução
+./renderer <arq_entrada> <arq_saida.ppm> [largura] [altura]
 
-### 2.1. Compilação
+exemplo:
 
-O projeto requer a biblioteca matemática (`-lm`) e deve ser compilado via `Makefile`:
-
-```bash
-make
+./renderer Arquivos/test1.in imagem.ppm 1280 960
