@@ -1,4 +1,4 @@
-## Ray Tracer Distribuído (V1.0)
+## Ray Tracer
 
 Este projeto implementa um Ray Tracer em C, utilizando técnicas de **Ray Tracing Distribuído** para gerar imagens 3D fotorrealistas a partir de um arquivo de configuração de cena.
 
@@ -53,3 +53,10 @@ exemplo:
 ```bash
 ./renderer Arquivos/test1.in imagem.ppm 1280 960
 ```
+
+### 4. Extras implementados
+Adição de outras cônicas, como cilindro e cone. 5%
+Adição de iluminação suave. 5%
+Adição de Distância focal e abertura de câmera. 10%
+
+Todas as imagens podem ser vistas na pasta results.
