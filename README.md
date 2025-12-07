@@ -1,14 +1,10 @@
-## 📝 ARQUIVO: `README.md`
-
-### Ray Tracer Distribuído (V1.0)
+## Ray Tracer Distribuído (V1.0)
 
 Este projeto implementa um Ray Tracer em C, utilizando técnicas de **Ray Tracing Distribuído** para gerar imagens 3D fotorrealistas a partir de um arquivo de configuração de cena.
 
 ---
 
 ### 1. Funcionalidades Implementadas (Features)
-
-O motor de renderização suporta as seguintes capacidades, baseadas em Ray Tracing Distribuído:
 
 * **Geometria:** Suporte nativo para **Esferas**, **Poliedros Convexos**, **Cilindros** e **Cones**.
 * **Iluminação (Phong):** Implementação do Modelo de Reflexão de **Phong** (Ambiente, Difusa, Especular) para iluminação local.
@@ -23,11 +19,9 @@ O motor de renderização suporta as seguintes capacidades, baseadas em Ray Trac
 
 ---
 
-### 2. Especificação do Arquivo de Entrada (Estrutura Normal)
+### 2. Estrutura do Arquivo de Entrada (Parâmetros)
 
-O arquivo de entrada é um texto simples que define a cena em blocos sequenciais.
-
-1. **Câmera:** Definida por Posição, Ponto de Visão, Vetor 'Up' e **FOV** (Field of View). Os parâmetros de **Abertura (Aperture)** e **Distância Focal (Focal\_Dist)** são definidos na mesma linha do FOV.
+1. **Câmera:** Definida por Posição, Ponto de Visão, Vetor 'Up' e FOV. Os parâmetros de **Abertura ($\text{aperture}$)** e **Distância Focal ($\text{focal\_dist}$)** são definidos na mesma linha do FOV.
 
 2. **Luzes:** Cada luz é definida por Posição, Cor, Atenuação ($\text{K}_c, \text{K}_l, \text{K}_q$) e o **Raio ($\text{R}$)**. Se $\text{R}>0$, ativa a sombra suave.
 
@@ -42,15 +36,16 @@ O arquivo de entrada é um texto simples que define a cena em blocos sequenciais
 ### 3. Instruções de Compilação e Execução
 
 #### 3.1. Compilação
-O projeto é compilado via `Makefile` e requer a biblioteca matemática (`-lm`).
-```bash make
-
+```bash
+make
+```
 #### 3.2. Execução
 
 O programa exige o arquivo de entrada e o nome do arquivo de saída (PPM). A resolução é opcional.
-
+```bash
 ./renderer <arq_entrada> <arq_saida.ppm> [largura] [altura]
-
+```
 exemplo:
-
+```bash
 ./renderer Arquivos/test1.in imagem.ppm 1280 960
+```
